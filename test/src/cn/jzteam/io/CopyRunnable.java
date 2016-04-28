@@ -25,10 +25,13 @@ public class CopyRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println(Thread.currentThread().getName()+" start task!!");
+		long start = System.currentTimeMillis();
+		long over = 0;
+		System.out.println(Thread.currentThread().getName() + " start task!!");
 		BufferedInputStream bis = null;
 		RandomAccessFile raf = null;
 		byte[] buf = new byte[BYTE_SIZE];
+		long count = 0;
 		long total = end - begin;
 		long left = total;
 		int len = 0;
@@ -40,13 +43,13 @@ public class CopyRunnable implements Runnable {
 			while (left > 0) {
 				len = bis.read(buf);
 				left -= len;
-				if (len == -1){
-					System.out.println(Thread.currentThread().getName()+" finish!!");
+				if (len == -1) {
+					System.out.println(Thread.currentThread().getName() + " finish!!");
 					return;
 				}
 				raf.write(buf, 0, len);
+				count += len;
 			}
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -64,8 +67,12 @@ public class CopyRunnable implements Runnable {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			over = System.currentTimeMillis();
+			System.out.println(Thread.currentThread().getName() + " finish!!");
+			synchronized (CopyRunnable.class) {
+				System.out.println(Thread.currentThread().getName() + "任务字节" + count + ",耗时" + (double)(over - start)/1000+"秒");
+			}
 		}
-		System.out.println(Thread.currentThread().getName()+" finish!!");
 	}
 
 }

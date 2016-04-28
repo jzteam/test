@@ -1,31 +1,39 @@
 package cn.jzteam.io;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FileUtils {
 
+	/**
+	 * 使用线程组完成多线程复制文件或文件夹
+	 * @param src
+	 * @param desc
+	 */
 	public static void multiThreadCopy(String src, String desc) {
+		
 		File file = new File(src);
 		if (!file.exists()) {
 			System.out.println(src + " not found");
 			return;
 		}
-
+		File descFile = new File(desc);
 		if (file.isFile()) {
-			long total = file.length();
-			long left = total % CopyRunnable.THREAD_SIZE;
-			long temp = 0;
-			if (left == 0) {
-				temp = total / CopyRunnable.THREAD_SIZE;
-			} else {
-				temp = total / (CopyRunnable.THREAD_SIZE - 1);
-				left = total % (CopyRunnable.THREAD_SIZE - 1);
+			if(!descFile.exists()){
+				String parent = descFile.getParent();
+				File pFile = new File(parent);
+				if(!pFile.exists()){
+					pFile.mkdirs();
+				}
 			}
+			long total = file.length();
+			long temp = total / CopyRunnable.THREAD_SIZE;
+			ExecutorService es = Executors.newFixedThreadPool(CopyRunnable.THREAD_SIZE);
 			for (int i = 0; i < CopyRunnable.THREAD_SIZE; i++) {
-				new Thread(new CopyRunnable(i * temp, (i + 1) * temp, src, desc), "thread " + i).start();
+				es.submit(new CopyRunnable(i * temp, (i + 1) * temp, src, desc), "thread " + i);
 			}
 		} else {
-			File descFile = new File(desc);
 			if (!descFile.exists())
 				descFile.mkdirs();
 			String[] list = file.list();
