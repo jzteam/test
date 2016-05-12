@@ -11,7 +11,9 @@ public class TestServerSocket {
 		ServerSocket ss = null;
 		Map<String,Socket> map = new HashMap<>();
 		try {
-			ss = new ServerSocket(40000);
+			//InetAddress inet = InetAddress.getByAddress(new byte[]{115,35,81,36});
+			//ss = new ServerSocket(40000, 1, inet);
+			ss = new ServerSocket(5938);
 			System.out.println("µÈ´ýÁ¬½Ó");
 			while(true){
 				Socket socket = ss.accept();
