@@ -33,7 +33,6 @@ public class ChatRunnable implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			//e.printStackTrace();
 			System.out.println(socket.getInetAddress().getHostName()+"ÍË³ö");
 		}
 	}
